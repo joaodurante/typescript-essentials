@@ -1,5 +1,5 @@
 /********************************
- ****  CHAPTER 6 - GENERICS  ****
+ ****  CHAPTER 7 - GENERICS  ****
  ********************************/
 
 function echo(obj: any): any {
