@@ -81,3 +81,58 @@ function adminProfile<T extends Constructor>(constructor: T) {
 }
 
 new AdminUpdate().critical()
+
+
+// method decorator //
+class Account {
+    @notNegative
+    private total: number
+
+    constructor(total: number) {
+        this.total = total
+    }
+
+
+    withdraw(@paramInfo amount: number): boolean {
+        if(amount <= this.total) {
+            this.total -= amount
+            return true
+        } else {
+            return false
+        }
+    }
+
+    @freeze                                 // prevents method changes
+    getTotal(): number {
+        return this.total
+    }
+}
+
+const account = new Account(2000)
+console.log(account.getTotal())
+console.log(account.withdraw(3000))
+console.log(account.getTotal())
+
+function freeze(target: any, methodName: string, descriptor: PropertyDescriptor) {
+    descriptor.writable = false
+}
+
+function notNegative(target: any, propertyName: string) {
+    delete target[propertyName]
+    Object.defineProperty(target, propertyName, {
+        get: function(): any {
+            return target['_' + propertyName]
+        },
+        set: function(value: any) {
+            if(value < 0) {
+                throw new Error('Invalid value')
+            } else {
+                target['_' + propertyName] = value
+            }
+        }
+    })
+}
+
+function paramInfo(target: any, methodName: string, paramIndex: number) {
+    console.log(`param ${target}, ${methodName}, ${paramIndex}`)
+}
